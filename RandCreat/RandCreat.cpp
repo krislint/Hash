@@ -5,33 +5,35 @@
 #include <iostream>
 #include <set>
 #include <ctime>
-#include <stdlib.h>
-#include <stdio.h>
+
 using namespace std;
 
 const int Amount = 100000;
 //const double rate =0.666;
 
-void RandCreat(char *adress)
+void RandCreat(const char *adress)
 {
 	srand((unsigned)time(NULL));
 	set<string> names;
-	FILE *fp;
-	fopen_s(&fp, adress, "w");
-
-	while (names.size() <= Amount)
+	FILE *fp = NULL;
+	errno_t err = fopen_s(&fp, adress, "w");
+	if ( err!= 0) return;
+	int nowsize = 0;
+	while (nowsize<Amount)
 	{
 		int len = 5 + rand() % 5;
 		string name = "";
 		for (int i = 0; i<len; ++i)
 		{
-			name += rand() % 26 + 'a';
+			if (rand() % 2)	name += rand() % 26 + 'a';
+			else name += rand() % 26 + 'A';
 		}
 
 		if (names.find(name) == names.end())
 		{
 			names.insert(name);
 			fprintf(fp, "%s\n", name.c_str());
+			nowsize++;
 		}
 
 	}
@@ -45,7 +47,7 @@ int main(int argc, char *argv[])
 {
 	//RandCreat("input.txt");
 
-	for (int i = 1; i <= argc; ++i)
+	for (int i = 1; i < argc; ++i)
 	{
 		RandCreat(argv[i]);
 	}
